@@ -1,0 +1,86 @@
+//Define do sensor de temperatura
+#define sensor_temp A5
+
+
+// Define pinOut das saídas
+#define v1 13
+#define v2 12
+#define v3 11
+
+int velocidade = 0;
+int indice = 0 ;
+  
+void setup()
+{ 
+  pinMode(v1, OUTPUT);
+  pinMode(v2, OUTPUT);
+  pinMode(v3, OUTPUT);
+  
+
+  pinMode(sensor_temp, INPUT); //  pinMode(PIN SENSOR, INPUT_PULLUP);
+  
+  Serial.begin(9600);
+  
+}
+void loop()
+{
+  delay(2000);    
+  
+  int lersensor = analogRead(sensor_temp)*0.097751710;
+
+ Serial.println("Temperatura atual(°C): "+ String(lersensor));
+ 
+ 
+  if(lersensor>0)
+  {
+    if (lersensor > 25){ 
+      velocidade = 3; // TEMPERATURA ALTA
+    } 
+    if(lersensor > 19 && lersensor <= 25){
+      velocidade = 2; // TEMPERATURA NORMAL
+    }
+    if(lersensor > 0 && lersensor < 20){
+      velocidade = 1;// TEMPERATURA BAIXA
+    }
+    // inicia função para setar temperatura  
+    set_velo(velocidade);
+  }else {
+    Serial.println("Erro de leitura!!");
+    set_velo(0);
+    }
+}
+
+void set_velo(int vel_value)
+{  
+  switch(vel_value)
+  {
+    case(3):
+        Serial.println("TEMPERATURA ALTA");
+    	Serial.println(" ");
+  	  	digitalWrite(v1, HIGH);
+        digitalWrite(v2, LOW);
+        digitalWrite(v3, LOW);
+        
+        break;  
+    case(2):
+        Serial.println("TEMPERATURA NORMAL");
+    	Serial.println(" ");
+        digitalWrite(v1, LOW);
+        digitalWrite(v2, HIGH);
+        digitalWrite(v3, LOW);
+        break;
+    case(1):
+        Serial.println("TEMPERATURA BAIXA");
+    	Serial.println(" ");
+        digitalWrite(v1, LOW);
+        digitalWrite(v2, LOW);
+        digitalWrite(v3, HIGH);
+       break;
+      default:
+        
+        Serial.println("ERRO NA LEITURA DA TEMPERATURA");
+        digitalWrite(v1, HIGH);
+        digitalWrite(v2, HIGH);
+        digitalWrite(v3, HIGH);
+  }
+}
